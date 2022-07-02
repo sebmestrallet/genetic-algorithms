@@ -1,4 +1,3 @@
-from turtle import color
 import numpy as np
 import pandas as pd
 import plotly.express as px
@@ -57,6 +56,16 @@ def afficher_stats_scores(scores,num_generation):
     print("Score moyen :    {}".format(scores.mean()))
     print("Meilleur score : {}".format(scores.max()))
     print("Ecart-type :     {}".format(scores.std()))
+
+def selection(population,scores):
+    nb_individus = population.shape[0]
+    if(nb_individus%2 != 0):
+        print("Le nombre d'individus n'est pas pair")
+    nb_enfants = int(nb_individus/2)
+    index = np.argsort(scores,0)#index qui trierais les scores
+    population_triee = population[index[::-1]]#l'appliquer sur population
+    individus_selectionnes = population_triee[:nb_enfants]#on ne garde que les nb_enfants premiers
+    return individus_selectionnes
 
 def afficher_genes_individu(individu):
     print(np.array2string(individu, separator='')[1:-1],end='')
