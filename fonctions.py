@@ -67,6 +67,24 @@ def selection(population,scores):
     individus_selectionnes = population_triee[:nb_enfants]#on ne garde que les nb_enfants premiers
     return individus_selectionnes
 
+def melange_parents(parents):
+    return parents[np.random.permutation(parents.shape[0])]
+
+def croisement(parent1,parent2):
+    enfant1 = np.copy(parent1)
+    enfant2 = np.copy(parent2)
+    #tirage au sort d'un point de croisement
+    #chromosomes de 8 genes [0:7]
+    # |0|1|2|3|4|5|6|7|
+    #   ^ ^ ^ ^ ^ ^ ^
+    #   0 1 2 3 4 5 6
+    #-> 7 points de croisement possible [0:6]
+    point_croisement = np.random.randint(0,7)#7 is excluded
+    temp = np.copy(enfant1[0:point_croisement+1])#copy the first chunck of enfant1 
+    enfant1[0:point_croisement+1] = np.copy(enfant2[0:point_croisement+1])#replace the first chunck of enfant1 by the first chunck of enfant2
+    enfant2[0:point_croisement+1] = np.copy(temp)#replace the first chunck of enfant2 by the saved first chunck of enfant1
+    return enfant1,enfant2,point_croisement
+
 def afficher_genes_individu(individu):
     print(np.array2string(individu, separator='')[1:-1],end='')
 
