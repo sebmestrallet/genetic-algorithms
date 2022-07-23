@@ -85,6 +85,18 @@ def croisement(parent1,parent2):
     enfant2[0:point_croisement+1] = np.copy(temp)#replace the first chunck of enfant2 by the saved first chunck of enfant1
     return enfant1,enfant2,point_croisement
 
+def index_des_meilleurs(scores,quantite):
+    index_originaux = np.arange(scores.shape[0])
+    index = np.argsort(scores,0)#index qui trierais les scores
+    population_triee = index_originaux[index[::-1]]#l'appliquer sur population
+    return population_triee[:quantite]#on ne garde que les quantite premiers
+
+def index_des_pires(scores,quantite):
+    index_originaux = np.arange(scores.shape[0])
+    index = np.argsort(scores,0)#index qui trierais les scores
+    population_triee = index_originaux[index[::1]]#l'appliquer sur population
+    return population_triee[:quantite]#on ne garde que les quantite premiers
+
 def afficher_genes_individu(individu):
     print(np.array2string(individu, separator='')[1:-1],end='')
 
