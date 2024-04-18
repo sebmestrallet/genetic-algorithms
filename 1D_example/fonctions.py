@@ -43,7 +43,7 @@ def calcul_scores_population(population):
         scores[index_individu] = calcul_score(valeur_decimale(individu_depuis_index(population,index_individu)))
     return scores
 
-def tracer_population(population,titre):
+def tracer_population(population,titre) -> go.Figure:
     x=np.arange(0,2**8)
     y=fonctionnelle_a_minimiser(x)
     fig = go.Figure()
@@ -52,7 +52,7 @@ def tracer_population(population,titre):
     y = fonctionnelle_a_minimiser(x)
     fig.add_trace(go.Scatter(x=x,y=y,mode='markers',marker_color='black'))
     fig.update_layout(title_text=titre)
-    fig.show()
+    return fig
 
 def afficher_stats_scores(scores,num_generation):
     print("\nGénération {} ----------------".format(num_generation))
