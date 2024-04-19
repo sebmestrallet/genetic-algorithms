@@ -13,6 +13,7 @@ dependencies = [
     "ipykernel>=6.29.4",
     "nbformat>=5.10.4",
     "kaleido>=0.2.1",
+    "rich>=13.7.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"

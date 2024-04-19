@@ -42,9 +42,13 @@ jupyter-core==5.7.2
     # via nbformat
 kaleido==0.2.1
     # via genetic-algorithms
+markdown-it-py==3.0.0
+    # via rich
 matplotlib-inline==0.1.7
     # via ipykernel
     # via ipython
+mdurl==0.1.2
+    # via markdown-it-py
 nbformat==5.10.4
     # via genetic-algorithms
 nest-asyncio==1.6.0
@@ -75,6 +79,7 @@ pure-eval==0.2.2
     # via stack-data
 pygments==2.17.2
     # via ipython
+    # via rich
 python-dateutil==2.9.0.post0
     # via jupyter-client
     # via pandas
@@ -86,6 +91,8 @@ pyzmq==26.0.0
 referencing==0.34.0
     # via jsonschema
     # via jsonschema-specifications
+rich==13.7.1
+    # via genetic-algorithms
 rpds-py==0.18.0
     # via jsonschema
     # via referencing
