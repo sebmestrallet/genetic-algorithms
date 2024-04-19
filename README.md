@@ -1,6 +1,11 @@
 Simple examples of genetic algorithms.
 University project, originally with MATLAB, to be transcoded in Python.
 
+There is a difference between the MATLAB script and the Python one :
+In the MATALB script, half of the init population is selected, then crossover & mutations are applied on this half of the population.
+An the end, a fixed number of the best children replaces the worse parents.
+In the Python notebook, a copy of all the init population go through the crossover & mutation steps. At the end, the two set of N individuals are combined into a single set of N individuals, the new generation.
+
 # Python environment
 
 The project is managed with [Rye](https://rye-up.com/) ([`astral-sh/rye`](https://github.com/astral-sh/rye)).
