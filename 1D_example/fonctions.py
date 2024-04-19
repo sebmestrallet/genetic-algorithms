@@ -235,7 +235,8 @@ def boucle_optimisation(population,proba_croisement,proba_mutation,max_generatio
             print("\nNouvelle population")
             afficher_population_et_scores(population,scores)
         
-        tracer_population(population,"Population a la generation {}".format(num_generation))
+        fig1 = tracer_population(population,"Population a la generation {}".format(num_generation))
+        fig1.write_image(f'generation_{num_generation}.png')
         sleep(0.5)
 
     print("\nCritere de convergence atteint")
@@ -253,4 +254,5 @@ def boucle_optimisation(population,proba_croisement,proba_mutation,max_generatio
         fig2.add_trace(go.Scatter(x=x,y=meilleurs_scores[0:num_generation+1][0],mode='lines+markers'))
         fig2.update_layout(title_text="Evolution du score")
         fig2.layout.yaxis.range = [0, 9]
+        fig2.write_image(f'evolution_du_score.png')
         fig2.show()
