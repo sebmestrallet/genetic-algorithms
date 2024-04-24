@@ -25,3 +25,7 @@ Genetic algorithm vs Active contour
 MATLAB code for active contours :
 > **Active Contour MATLAB algorithm from Ritwik Kumar**
 > Ritwik Kumar (2022). Snakes: Active Contour Models (https://www.mathworks.com/matlabcentral/fileexchange/28109-snakes-active-contour-models), MATLAB Central File Exchange. Retrieved April 7, 2022. 
+
+# Licence
+
+[MIT](LICENCE.txt), except for the active contour MATLAB algorithm, see [2D_example_Image_segmentation/LICENCE.txt](2D_example_Image_segmentation/LICENCE.txt).
