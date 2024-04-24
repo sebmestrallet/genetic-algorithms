@@ -12,7 +12,7 @@ The project is managed with [Rye](https://rye-up.com/) ([`astral-sh/rye`](https:
 # 1D example : minimize a function with several local minimums
 
 <p align="center">
-    <img src="1D_example/anim.gif" width="50%" alt="GIF of the evolving population on top of the function to minimize">
+    <img src="1D_example/anim.gif" width="75%" alt="GIF of the evolving population on top of the function to minimize">
 </p>
 
 # 2D example : image segmentation
