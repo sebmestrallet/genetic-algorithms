@@ -1,10 +1,5 @@
 Simple examples of genetic algorithms.
-University project, originally with MATLAB, to be transcoded in Python.
-
-There is a difference between the MATLAB script and the Python one :
-In the MATALB script, half of the init population is selected, then crossover & mutations are applied on this half of the population.
-An the end, a fixed number of the best children replaces the worse parents.
-In the Python notebook, a copy of all the init population go through the crossover & mutation steps. At the end, the two set of N individuals are combined into a single set of N individuals, the new generation.
+University project, originally with MATLAB, (to be) transcoded in Python.
 
 # Python environment
 
@@ -14,7 +9,19 @@ The project is managed with [Rye](https://rye-up.com/) ([`astral-sh/rye`](https:
 1. `rye sync` creates the venv from `pyproject.toml`
 1. If you use VSCode to edit/run Jupyter notebooks, select the Python kernel in `.venv`.
 
-# MATLAB code for active contours
+# 1D example : minimize a function with several local minimums
 
-**Active Contour MATLAB algorithm from Ritwik Kumar**
-Ritwik Kumar (2022). Snakes: Active Contour Models (https://www.mathworks.com/matlabcentral/fileexchange/28109-snakes-active-contour-models), MATLAB Central File Exchange. Retrieved April 7, 2022. 
+<p align="center">
+    <img src="1D_example/anim.gif" width="50%" alt="GIF of the evolving population on top of the function to minimize">
+</p>
+
+# 2D example : image segmentation
+
+> [!NOTE]
+> Not transcoded in Python yet, there is only the (french :baguette_bread:) MATLAB code
+
+Genetic algorithm vs Active contour
+
+MATLAB code for active contours :
+> **Active Contour MATLAB algorithm from Ritwik Kumar**
+> Ritwik Kumar (2022). Snakes: Active Contour Models (https://www.mathworks.com/matlabcentral/fileexchange/28109-snakes-active-contour-models), MATLAB Central File Exchange. Retrieved April 7, 2022. 
