@@ -7,7 +7,7 @@ The project is managed with [Rye](https://rye-up.com/) ([`astral-sh/rye`](https:
 
 1. Install Rye
 1. `rye sync` creates the venv from `pyproject.toml`
-1. If you use VSCode to edit/run Jupyter notebooks, select the Python kernel in `.venv`.
+1. Open the Jupyter notebook and select the Python kernel in `.venv`.
 
 # 1D example : minimize a function with several local minimums
 
@@ -17,10 +17,15 @@ The project is managed with [Rye](https://rye-up.com/) ([`astral-sh/rye`](https:
 
 # 2D example : image segmentation
 
+Genetic algorithm vs Active contour.
+
+<p align="center">
+    <img src="2D_example_Image_segmentation/anim.gif" width="50%" alt="GIF of the active contour method segmenting an image, and below the evolving population a genetic algorithm on the same task"><br/>
+    <em>the genetic algorithm has been speeded up to compare the behavior, not the performance</em>
+</p>
+
 > [!NOTE]
 > Not transcoded in Python yet, there is only the (french :baguette_bread:) MATLAB code
-
-Genetic algorithm vs Active contour
 
 MATLAB code for active contours :
 > **Active Contour MATLAB algorithm from Ritwik Kumar**
