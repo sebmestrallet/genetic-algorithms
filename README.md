@@ -29,3 +29,7 @@ MATLAB code for active contours :
 # Licence
 
 [MIT](LICENCE.txt), except for the active contour MATLAB algorithm, see [2D_example_Image_segmentation/LICENCE.txt](2D_example_Image_segmentation/LICENCE.txt).
+
+# Cite this repository
+
+Use the [Cite this repository](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files) GitHub button, or directly the [CITATION.cff](CITATION.cff) file.
