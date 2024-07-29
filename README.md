@@ -3,7 +3,7 @@ University project, originally with MATLAB, (to be) transcoded in Python.
 
 # Python environment
 
-The project is managed with [Rye](https://rye-up.com/) ([`astral-sh/rye`](https://github.com/astral-sh/rye)).
+The project is managed with [Rye](https://rye.astral.sh/) ([`astral-sh/rye`](https://github.com/astral-sh/rye)).
 
 1. Install Rye
 1. `rye sync` creates the venv from `pyproject.toml`
