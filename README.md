@@ -3,11 +3,12 @@ University project, originally with MATLAB, (to be) transcoded in Python.
 
 # Python environment
 
-The project is managed with [uv](https://docs.astral.sh/uv/).
+The project is managed with [uv](https://docs.astral.sh/uv/). Install uv first, then:
 
-1. Install uv
-1. `uv sync` creates the venv from `pyproject.toml`
-1. Open the Jupyter notebook and select the Python kernel in `.venv`.
+```bash
+uv sync
+uv run marimo edit
+```
 
 # 1D example : minimize a function with several local minimums
 
