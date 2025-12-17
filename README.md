@@ -3,10 +3,10 @@ University project, originally with MATLAB, (to be) transcoded in Python.
 
 # Python environment
 
-The project is managed with [Rye](https://rye.astral.sh/) ([`astral-sh/rye`](https://github.com/astral-sh/rye)).
+The project is managed with [uv](https://docs.astral.sh/uv/).
 
-1. Install Rye
-1. `rye sync` creates the venv from `pyproject.toml`
+1. Install uv
+1. `uv sync` creates the venv from `pyproject.toml`
 1. Open the Jupyter notebook and select the Python kernel in `.venv`.
 
 # 1D example : minimize a function with several local minimums

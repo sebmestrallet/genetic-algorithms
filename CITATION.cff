@@ -12,7 +12,7 @@ authors:
     family-names: Mestrallet
     email: sebastien.mestrallet@hey.com
     orcid: 'https://orcid.org/0000-0002-4519-2814'
-repository-code: 'https://github.com/sebmestrallet/genetic-algorithms'
+repository-code: 'https://codeberg.org/sebmestrallet/genetic-algorithms'
 abstract: Simple examples of genetic algorithms
 keywords:
   - genetic-algorithms
