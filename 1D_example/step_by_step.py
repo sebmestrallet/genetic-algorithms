@@ -8,47 +8,18 @@ app = marimo.App()
 def _(mo):
     mo.md(r"""
     # Genetic algorithms: 1D example
-
-    Import some packages/modules
     """)
     return
 
 
 @app.cell
-def _():
-    import numpy as np
-    import plotly.graph_objects as go
-    from IPython.display import clear_output
-    from rich.table import Table
-    from rich.theme import Theme
-    from rich.console import Console
-    from rich.panel import Panel
-    from shutil import copyfile
-
-    # Set the seed of the random number generator.
-    # `np.random.seed(value)` is considered a legacy function,
-    # so let's use a `np.random.Generator`
-    rng: np.random.Generator = np.random.default_rng(seed=112358)
-
+def _(Console, Theme):
     # create a Rich Console object
-    # TODO not a global var, pass it to function
-    console = Console(theme=Theme({"repr.number": ""})) # no special style for numbers, affecting chromosome printing
-    return Console, Panel, Table, console, copyfile, go, np, rng
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    Notebook settings
-    """)
-    return
-
-
-@app.cell
-def _():
-    EXPORT_FIGURES = True
-    IMAGES_EXT = "png"
-    return EXPORT_FIGURES, IMAGES_EXT
+    console = Console( 
+        color_system="truecolor", # force coloring while https://github.com/Textualize/rich/pull/3651 isn't merged
+        theme=Theme({"repr.number": ""}) # no special style for numbers, affecting chromosome printing
+    )
+    return (console,)
 
 
 @app.cell(hide_code=True)
@@ -68,23 +39,30 @@ def _(mo):
 
 
 @app.cell
-def _(EXPORT_FIGURES, IMAGES_EXT, go, np):
+def _(go, np):
     function_to_minimize = lambda x: -0.02 * x * np.sin(0.01 * x * 2 * np.pi) - 4
+
     fitness_score = lambda x: -function_to_minimize(x)
-    x = np.arange(0, 2 ** 8)
-    y = function_to_minimize(x)
+
     # compute its value over the domain
-      # range [0, 2^8=256[ -> [0, 255]
-    def plot_objective_function(x: np.ndarray, y: np.ndarray) -> go.Figure:  # evaluate all values in x
-        _fig = go.Figure(go.Scatter(x=x, y=y, mode='lines', name='objective function'), layout_xaxis_range=[0, 255], layout_yaxis_range=[-9, 0])
+    x = np.arange(0, 2 ** 8) # range [0, 2^8=256[ -> [0, 255]
+    y = function_to_minimize(x) # evaluate all values in x
+
     # define how to plot the function
-        _fig.update_layout(title_text='Function to minimize')
-        return _fig
+    def plot_objective_function(x: np.ndarray, y: np.ndarray) -> go.Figure:  
+        fig = go.Figure(
+            go.Scatter(x=x, y=y, mode='lines', name='objective function'),
+            layout_xaxis_range=[0, 255],
+            layout_yaxis_range=[-9, 0]
+        )
+        fig.update_layout(title_text='Function to minimize')
+        return fig
+
+    # plot the function
     _fig = plot_objective_function(x, y)
     _fig.show()
-    if EXPORT_FIGURES:
-        _fig.write_image('function_to_minimize.' + IMAGES_EXT)
-    # plot the function
+
+
     print(f'The minimum is {np.min(y):0.3f} at x={np.argmin(y)}')
     return fitness_score, function_to_minimize, plot_objective_function, x, y
 
@@ -113,37 +91,44 @@ def _(np):
         """
         Decimal to Binary conversion
         """
-        binary = '{:0>{width}}'.format(bin(dec)[2:], 'b', width=N)  # convert to string with bin(), remove '0b', pad with '0's for fixed width
+        # convert to string with bin(), remove '0b', pad with '0's for fixed width
+        binary = '{:0>{width}}'.format(bin(dec)[2:], 'b', width=N)
+        # separate chars with ' ' and use this separator to get an int array
         return np.fromstring(' '.join(binary), dtype=int, sep=' ')
-      # separate chars with ' ' and use this separator to get an int array
+  
     def bin2dec(bin):
         """
         Binary to decimal conversion
         """
-        bin = np.array2string(bin, separator='')[1:-1]
+        # create a string from the array
+        bin = np.array2string(bin, separator='')[1:-1] # remove leading and trailing square brackets
         return int(bin, base=2)
-      #create a string from the array
-    def dec2gc(dec, N):  # remove leading and trailing square brackets
+
+    # https://www.geeksforgeeks.org/decimal-equivalent-gray-code-inverse/
+  
+    def dec2gc(dec, N):
         """
         Decimal to Gray code conversion
-    # https://www.geeksforgeeks.org/decimal-equivalent-gray-code-inverse/
         """
         binary = dec
-        binary = binary ^ binary >> 1
+        binary = binary ^ binary >> 1 # conversion happens here
+        # convert to string with bin(), remove '0b', pad with '0's for fixed width
         binary = '{:0>{width}}'.format(bin(binary)[2:], 'b', width=N)
+        # separate chars with ' ' and use this separator to get an int array
         return np.fromstring(' '.join(binary), dtype=int, sep=' ')
 
-    def gc2dec(gc):  # conversion happens here
-        """  # convert to string with bin(), remove '0b', pad with '0's for fixed width
+    def gc2dec(gc):
+        """
         Gray code to decimal conversion
-        """  # separate chars with ' ' and use this separator to get an int array
-        gc = np.array2string(gc, separator='')[1:-1]
+        """
+        #create a string from the array
+        gc = np.array2string(gc, separator='')[1:-1] # remove leading and trailing square brackets
         gc = int(gc, base=2)
         inv = 0
         while gc:
             inv = inv ^ gc
             gc = gc >> 1
-        return inv  #create a string from the array  # remove leading and trailing square brackets
+        return inv
     return bin2dec, dec2bin, dec2gc, gc2dec
 
 
@@ -157,8 +142,7 @@ def _(mo):
 
 @app.cell
 def _(np):
-    chromosome2str = lambda chromosome: ''.join([str(allele) for allele in chromosome]) # `chromosome` being a numpy array of int (row of `population` defined below)
-    # or use `np.array2string(gc, separator='')[1:-1]` instead?
+    chromosome2str = lambda chromosome: np.array2string(chromosome, separator='')[1:-1] # `chromosome` being a numpy array of int (row of `population` defined below)
 
     chromosome2str(np.array([1,1,0,1,0,0,0,1],dtype=int))
     return (chromosome2str,)
@@ -177,33 +161,45 @@ def _(bin2dec, chromosome2str, console, dec2bin, dec2gc, gc2dec):
     decimal_value_1 = 95
     binary_value_1 = dec2bin(decimal_value_1, 8)
     gray_code_1 = dec2gc(decimal_value_1, 8)
-    console.print(f'{decimal_value_1} has {chromosome2str(binary_value_1)} as binary value\n   and {chromosome2str(gray_code_1)} as Gray code')
     back_to_decimal = gc2dec(gray_code_1)
+    console.print(f'{decimal_value_1} has {chromosome2str(binary_value_1)} as binary value\n   and {chromosome2str(gray_code_1)} as Gray code')
+
     # test inverse conversion
     assert back_to_decimal == decimal_value_1
     back_to_decimal = bin2dec(binary_value_1)
     assert back_to_decimal == decimal_value_1
+
     decimal_value_2 = decimal_value_1 + 1
     binary_value_2 = dec2bin(decimal_value_2, 8)
     gray_code_2 = dec2gc(decimal_value_2, 8)
     to_print = f'{decimal_value_2} has '
     for gene in range(8):
         if binary_value_2[gene] != binary_value_1[gene]:
-            to_print = to_print + f'[b][bright_magenta]{binary_value_2[gene]}[/][/]'
+            to_print += f'[b][bright_magenta]{binary_value_2[gene]}[/][/]'
         else:
             to_print = to_print + str(binary_value_2[gene])
     to_print = to_print + ' as binary value\n   and '
     for gene in range(8):
         if gray_code_2[gene] != gray_code_1[gene]:
-            to_print = to_print + f'[b][bright_magenta]{gray_code_2[gene]}[/][/]'
+            to_print += f'[b][bright_magenta]{gray_code_2[gene]}[/][/]'
         else:
             to_print = to_print + str(gray_code_2[gene])
     to_print = to_print + ' as Gray code'
     console.print(to_print)
+
+    # test inverse conversion
     back_to_decimal = gc2dec(gray_code_2)
     assert back_to_decimal == decimal_value_2
     back_to_decimal = bin2dec(binary_value_2)
     assert back_to_decimal == decimal_value_2
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    95 and 96 differ in **6 bits** in binary representation, but in only **1 bit** in Gray code.
+    """)
     return
 
 
@@ -220,10 +216,14 @@ def _(mo):
 
 
 @app.cell
-def _(rng: "np.random.Generator"):
+def _(np):
+    # Create a random number generator with a specified seed.
+    # `np.random.seed(value)` is considered a legacy function,
+    # so let's use a `np.random.Generator`
+    rng: np.random.Generator = np.random.default_rng(seed=112358)
+
     population = rng.integers(low=0, high=2, size=(20,8))
-    generation = 0
-    return generation, population
+    return population, rng
 
 
 @app.cell(hide_code=True)
@@ -248,32 +248,45 @@ def _(
 ):
     # define how to evaluate a given population
     def evaluate_population(population: np.ndarray) -> np.ndarray:
-        _scores = np.zeros((population.shape[0], 1))  # a column vector of size N, N = number of individuals
+        scores = np.zeros((population.shape[0], 1))  # a column vector of size N, N = number of individuals
         for idx in range(0, population.shape[0]):
-            _scores[idx] = fitness_score(gc2dec(population[idx, :]))
-        return _scores
-    _scores: np.ndarray = evaluate_population(population)
-    # evaluate the initial population
+            scores[idx] = fitness_score(gc2dec(population[idx, :]))
+        return scores
 
-    def display_scores(population: np.ndarray, scores: np.ndarray, console: Console):
+    # evaluate the initial population
+    _scores: np.ndarray = evaluate_population(population)
+
     # define how to display the scores
+    def display_scores(population: np.ndarray, scores: np.ndarray, console: Console):
         assert population.shape[0] == _scores.shape[0]
         table = Table(title='Fitness scores')
         table.add_column('Index')
         table.add_column('Chromosome')
         table.add_column('Score')
         for idx in range(0, population.shape[0]):
-            table.add_row(str(idx), chromosome2str(population[idx, :]), f'{_scores[idx, 0]:0.3f}')
+            table.add_row(
+                str(idx),
+                chromosome2str(population[idx, :]),
+                f'{_scores[idx, 0]:0.3f}'
+            )
         console.print(table)
 
     def compute_stats(values: np.ndarray) -> tuple[float, float, float]:
         return (values.mean(), values.max(), values.std())
 
     def print_generation_stats(mean: float, max: float, std_dev: float):
-        console.print(Panel.fit(f'mean score = {mean:0.3f}\n' + f'best score = {max:0.3f}\n' + f' std. dev. = {std_dev:0.3f}', title=f'Score stats'))
+        console.print(
+            Panel.fit(
+                f'mean score = {mean:0.3f}\n' +
+                f'best score = {max:0.3f}\n' +
+                f' std. dev. = {std_dev:0.3f}',
+                title=f'Score stats'
+            )
+        )
+
+    # display the scores of the initial population
     display_scores(population, _scores, console)
     mean, max, std_dev = compute_stats(_scores)
-    # display the scores of the initial population
     print_generation_stats(mean, max, std_dev)
     return (
         compute_stats,
@@ -295,11 +308,8 @@ def _(mo):
 
 @app.cell
 def _(
-    EXPORT_FIGURES,
-    IMAGES_EXT,
     function_to_minimize,
     gc2dec,
-    generation,
     go,
     max,
     mean,
@@ -312,18 +322,23 @@ def _(
 ):
     # define how to plot a given population
     def plot_population(x, y, population, generation, score_mean, score_max, score_std_dev) -> go.Figure:
-        _fig = plot_objective_function(x, y)
+        fig = plot_objective_function(x, y)
         x_population = np.apply_along_axis(lambda x: float(gc2dec(x)), axis=1, arr=population)
         y_population = function_to_minimize(x_population)
-        _fig.add_trace(go.Scatter(x=x_population, y=y_population, mode='markers', marker_color='black', marker_size=10, name='individuals'))
-        _fig.layout.update(showlegend=False)
-        _fig.update_layout(title_text=f'Generation {generation}   -   scores : avg = {score_mean:0.3f}, max = {score_max:0.3f}, sd = {score_std_dev:0.3f}')
-        return _fig
-    _fig = plot_population(x, y, population, generation, mean, max, std_dev)
+        fig.add_trace(go.Scatter(
+            x=x_population,
+            y=y_population,
+            mode='markers',
+            marker_color='black',
+            marker_size=10,
+            name='individuals'
+        ))
+        fig.layout.update(showlegend=False)
+        fig.update_layout(title_text=f'Generation {generation}   -   scores : avg = {score_mean:0.3f}, max = {score_max:0.3f}, sd = {score_std_dev:0.3f}')
+        return fig
+
+    _fig = plot_population(x, y, population, 0, mean, max, std_dev)
     _fig.show()
-    if EXPORT_FIGURES:
-    # plot the initial population
-        _fig.write_image(f'generation_{generation}.' + IMAGES_EXT)  # remove legend
     return (plot_population,)
 
 
@@ -357,7 +372,6 @@ def _(chromosome2str, console, np):
         return child1, child2
 
     # define how to visualize a crossover between two chromosomes
-
     def display_crossover(parent1: np.ndarray, parent2: np.ndarray, crossover_point: int, child1: np.ndarray, child2: np.ndarray):
         console.print(
             f'parent1 : [bright_red]{chromosome2str(parent1)}[/]\n'
@@ -388,8 +402,7 @@ def _(mo):
     To apply the crossover on the whole population, we have to
     1. Shuffle the population
     1. Group parents in pairs
-    1. For each pair, pick a random number according to a crossover probability
-       If no crossover for the current pair, copy the parents chromosomes into the children ones
+    1. For each pair, pick a random number according to a crossover probability<br/>If no crossover for the current pair, copy the parents chromosomes into the children ones
     """)
     return
 
@@ -438,10 +451,12 @@ def _(
                         f' child1 : {chromosome2str(children[i,:])}\n'
                         f' child2 : {chromosome2str(children[i+1,:])}\n'
                     )
+            if display_crossovers:
+                print('\n') # some space between pairs
         return children
 
     children = population_crossover(population,crossover_probability,rng,True)
-    return children, crossover_probability, population_crossover
+    return (children,)
 
 
 @app.cell(hide_code=True)
@@ -474,8 +489,9 @@ def _(children, chromosome2str, console, np, rng: "np.random.Generator"):
                 to_print = to_print + '\n'
         if display_mutations:
             console.print(to_print)
+
     population_mutation(children, mutation_probability, rng, True)
-    return mutation_probability, population_mutation
+    return
 
 
 @app.cell(hide_code=True)
@@ -507,160 +523,114 @@ def _(
     population,
 ):
     def indices_of_the_best(scores: np.ndarray, n: int) -> np.ndarray:
-        original_indices = np.arange(_scores.shape[0])
-        sorting_indices = np.argsort(_scores, 0)
-        sorted_original_indices = original_indices[sorting_indices[::-1]]
-        return sorted_original_indices[:n]
+        original_indices = np.arange(scores.shape[0])
+        sorting_indices = np.argsort(scores, 0) # the indices sorting the scores
+        sorted_original_indices = original_indices[sorting_indices[::-1]] # apply them on the original indices
+        return sorted_original_indices[:n] # keep only the n^th first
 
     def indices_of_the_worse(scores: np.ndarray, n: int) -> np.ndarray:
-        original_indices = np.arange(_scores.shape[0])
-        sorting_indices = np.argsort(_scores, 0)
-        sorted_original_indices = original_indices[sorting_indices[::1]]
-        return sorted_original_indices[:n]
-    n = 10
+        original_indices = np.arange(scores.shape[0])
+        sorting_indices = np.argsort(scores, 0) # the indices sorting the scores
+        sorted_original_indices = original_indices[sorting_indices[::1]] # apply them on the original indices
+        return sorted_original_indices[:n] # keep only the n^th first
+
+    n = 10 # the 10 worse parents will be replaced by the 10 best children
 
     def selection(parents: np.ndarray, children: np.ndarray, n, display_diff: bool=False) -> np.ndarray:
         new_population = np.copy(parents)
+
+        # recompute the scores of the parents, because the crossover shuffled them
         parents_scores = evaluate_population(parents)
+
+        # compute the scores of the children
         children_scores = evaluate_population(children)
+    
         indices_of_worse_parents = indices_of_the_worse(parents_scores, n)
         indices_of_best_children = indices_of_the_best(children_scores, n)
+    
         if display_diff:
+            # based on display_scores()
+        
             table = Table(title='Parents')
             table.add_column('Index')
             table.add_column('Chromosome')
             table.add_column('Score')
             for idx in range(0, parents.shape[0]):
                 score_str = f'{parents_scores[idx, 0]:0.3f}'
-                table.add_row(str(idx), chromosome2str(parents[idx, :]), score_str if idx not in indices_of_worse_parents else '[bright_red]' + score_str + '[/]')
+                table.add_row(
+                    str(idx),
+                    chromosome2str(parents[idx, :]),
+                    score_str if idx not in indices_of_worse_parents else '[bright_red]' + score_str + '[/]')
             console.print(table)
+        
             table = Table(title='Children')
             table.add_column('Index')
             table.add_column('Chromosome')
             table.add_column('Score')
             for idx in range(0, children.shape[0]):
                 score_str = f'{children_scores[idx, 0]:0.3f}'
-                table.add_row(str(idx), chromosome2str(children[idx, :]), score_str if idx not in indices_of_best_children else '[bright_green]' + score_str + '[/]')
+                table.add_row(
+                    str(idx),
+                    chromosome2str(children[idx, :]),
+                    score_str if idx not in indices_of_best_children else '[bright_green]' + score_str + '[/]')
             console.print(table)
+
+        # actual replacement
         for i in range(n):
+            # replacement in the population of one of the worse parent
+            # by one of the best child
             new_population[indices_of_worse_parents[i], :] = children[indices_of_best_children[i], :]
-        return new_population
-    population_1 = selection(population, children, n, True)
-    return population_1, selection
+        return new_population # TODO also update & return scores?
+
+    new_population = selection(population, children, n, True)
+    return (new_population,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    Evaluate and plot the new generation
+    Evaluate and plot the new population (generation 1)
     """)
     return
 
 
 @app.cell
 def _(
-    EXPORT_FIGURES,
-    IMAGES_EXT,
     compute_stats,
     console,
     display_scores,
     evaluate_population,
-    generation,
+    new_population,
     plot_population,
-    population_1,
     x,
     y,
 ):
-    generation_1 = generation + 1
-    _scores = evaluate_population(population_1)
-    print('new population:')
-    display_scores(population_1, _scores, console)
-    mean_1, max_1, std = compute_stats(_scores)
-    _fig = plot_population(x, y, population_1, generation_1, mean_1, max_1, std)
+    _scores = evaluate_population(new_population)
+    display_scores(new_population, _scores, console)
+    _fig = plot_population(x, y, new_population, 1, *compute_stats(_scores))
     _fig.show()
-    if EXPORT_FIGURES:
-        _fig.write_image(f'generation_{generation_1}.' + IMAGES_EXT)
-    return generation_1, std
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    # Putting it all together: optimisation loop
-
-    We need to define the stopping criterion: convergence, or max number of generation reached.
-
-    The convergence can be defined as a low standard deviation of the scores.
-    """)
     return
 
 
-@app.cell
-def _(
-    EXPORT_FIGURES,
-    IMAGES_EXT,
-    chromosome2str,
-    compute_stats,
-    console,
-    copyfile,
-    crossover_probability,
-    display_scores,
-    evaluate_population,
-    gc2dec,
-    generation_1,
-    mutation_probability,
-    np,
-    plot_population,
-    population_1,
-    population_crossover,
-    population_mutation,
-    rng: "np.random.Generator",
-    selection,
-    std,
-    x,
-    y,
-):
-    target_std = 0.01
-    max_generations = 100
-    while std > target_std and generation_1 <= max_generations:
-        children_1 = population_crossover(population_1, crossover_probability, rng)
-        population_mutation(children_1, mutation_probability, rng)
-        population_2 = selection(population_1, children_1, 10)
-        generation_2 = generation_1 + 1
-        _scores = evaluate_population(population_2)
-        display_scores(population_2, _scores, console)
-        mean_2, max_2, std_1 = compute_stats(_scores)
-        _fig = plot_population(x, y, population_2, generation_2, mean_2, max_2, std_1)
-        _fig.show()
-        if EXPORT_FIGURES:
-            _fig.write_image(f'generation_{generation_2}.' + IMAGES_EXT)
-    if EXPORT_FIGURES:
-        copyfile(f'generation_{generation_2}.' + IMAGES_EXT, f'generation_{generation_2 + 1}.' + IMAGES_EXT)
-        copyfile(f'generation_{generation_2}.' + IMAGES_EXT, f'generation_{generation_2 + 2}.' + IMAGES_EXT)
-        copyfile(f'generation_{generation_2}.' + IMAGES_EXT, f'generation_{generation_2 + 3}.' + IMAGES_EXT)
-        copyfile(f'generation_{generation_2}.' + IMAGES_EXT, f'generation_{generation_2 + 4}.' + IMAGES_EXT)
-    best_score_index = np.argmax(_scores)
-    best_score_input = population_2[best_score_index, :]
-    best_score_value = _scores[best_score_index, 0]
-    print(f'The best score is {best_score_value:0.3f} (f(x)={-best_score_value:0.3f}) at x = {chromosome2str(best_score_input)} = {gc2dec(best_score_input)}')
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    Then to obain a GIF of the evolving population from the `generation_*.png` images, with [Gifski](https://github.com/ImageOptim/gifski/) :
-    ```bash
-    gifski -o anim.gif generation_*.png --fps 2
-    ```
-    """)
-    return
+app._unparsable_cell(
+    r"""
+                        import marimo as mo
+    import numpy as np
+    import plotly.graph_objects as go
+    from IPython.display import clear_output
+    from rich.table import Table
+    from rich.theme import Theme
+    from rich.console import Console
+    from rich.panel import Panel
+    from shutil import copyfile
+    """,
+    name="_"
+)
 
 
 @app.cell
 def _():
-    import marimo as mo
-    return (mo,)
+    return
 
 
 if __name__ == "__main__":
